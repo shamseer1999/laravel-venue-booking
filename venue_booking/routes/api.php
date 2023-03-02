@@ -17,5 +17,7 @@ use App\Http\Controllers\VenueApiController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('book-venue',[VenueApiController::class,'book_venue']);
+    
 });
+Route::post('list-venues',[VenueApiController::class,'list_venues']);
 Route::post('login',[VenueApiController::class,'login']);

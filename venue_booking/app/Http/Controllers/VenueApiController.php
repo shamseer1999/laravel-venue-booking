@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Models\User;
 use App\Models\BookedVenues;
+use App\Models\Venue;
+use Illuminate\Support\Facades\DB;
 
 class VenueApiController extends Controller
 {
@@ -110,5 +112,56 @@ class VenueApiController extends Controller
             );
             return response()->json($out);
         }
+    }
+
+    //categorize based on bookings
+    public function list_venues()
+    {
+        $list=Venue::withCount('getMonthResults');
+        $out=array();
+        $goldlist=array();
+        $silverlist=array();
+        $bronzelist=array();
+        $normlist=array();
+
+        foreach($list as $item)
+        {
+            if($item->booked_venues_count >=15)
+            {
+                $goldlist['venue']=$item->venues_name;
+                $goldlist['booking_count']=$item->booked_venues_count;
+            }
+            elseif($item->booked_venues_count >=10)
+            {
+                $silverlist['venue']=$item->venues_name;
+                $silverlist['booking_count']=$item->booked_venues_count;
+            }
+            elseif($item->booked_venues_count >=5)
+            {
+                $bronzelist['vennue']=$item->venues_name;
+                $bronzelist['booking_count']=$item->booked_venues_count;
+            }
+            else
+            {
+                $normlist['venue']=$item->venues_name;
+                $normlist['booking_count']=$item->booked_venues_count;
+            }
+
+            
+        }
+
+        $out=array(
+            'status'=>1,
+            'message'=>'Categorized vennues list',
+            'data'=>array(
+                'gold'=>$goldlist,
+                'silver'=>$silverlist,
+                'bronze'=>$bronzelist,
+                'normal'=>$normlist
+            ),
+            
+        );
+        
+        return response()->json(['mess'=>$out]);
     }
 }

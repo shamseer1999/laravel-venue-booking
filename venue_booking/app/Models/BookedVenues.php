@@ -16,4 +16,9 @@ class BookedVenues extends Model
     {
         return $this->belongsTo(Slot::class,'slot_id','id');
     }
+
+    public function venues()
+    {
+        return $this->belongsTo(Venue::class,'venue_id','id');
+    }
 }

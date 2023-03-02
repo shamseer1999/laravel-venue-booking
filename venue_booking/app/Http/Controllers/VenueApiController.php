@@ -117,7 +117,7 @@ class VenueApiController extends Controller
     //categorize based on bookings
     public function list_venues()
     {
-        $list=Venue::withCount('getMonthResults');
+        $list=Venue::withCount('getMonthResults')->get();
         $out=array();
         $goldlist=array();
         $silverlist=array();
@@ -143,8 +143,17 @@ class VenueApiController extends Controller
             }
             else
             {
-                $normlist['venue']=$item->venues_name;
-                $normlist['booking_count']=$item->booked_venues_count;
+                if(!empty($item->booked_venues_count))
+                {
+                    $normlist['venue']=$item->venues_name;
+                    $normlist['booking_count']=$item->booked_venues_count;
+                }
+                else
+                {
+                    $normlist['venue']=$item->venues_name;
+                    $normlist['booking_count']=0;
+                }
+                
             }
 
             
@@ -161,7 +170,7 @@ class VenueApiController extends Controller
             ),
             
         );
-        
+
         return response()->json(['mess'=>$out]);
     }
 }
